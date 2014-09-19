@@ -16,16 +16,51 @@ radicale:
       - file: {{ radicale.config }}
 {%- endif %}
 
-radicale-config:
+{% for file in ['config','logging'] %}
+radicale-{{ file }}:
   file.managed:
-    - name: {{ radicale.config }}
+    - name: {{ radicale[file] }}
     - user: root
     - group: radicale
     - mode: 644
-    - source: salt://radicale/config.jinja
+    - source: salt://radicale/{{ file }}.jinja
     - template: jinja
     - defaults: 
         radicale: 
-{%- for key, val in radicale.items() %}
+  {%- for key, val in radicale.items() %}
             {{ key }}: {{ val }}
+  {%- endfor %}
 {%- endfor %}
+
+radicale-logfile:
+  file.managed:
+    - name: {{ radicale.logfile }}
+    - user: radicale
+    - group: radicale
+    - mode: 640
+
+{% if salt['pillar.get']('radicale:storage:type','filesystem') == 'filesystem' %}
+radicale-storage:
+  file.directory:
+    - name: {{ salt['pillar.get']('radicale:storage:filesystem_folder', radicale.filesystem_folder) }}
+    - user: radicale
+    - group: radicale
+    - mode: 750
+    - makedirs: True
+{% endif %}
+
+{% if salt['pillar.get']('radicale:auth:type','htpasswd') == 'htpasswd' %}
+radicale-htpasswd:
+  file.managed:
+    - name: {{ radicale.htpasswd_filename }}
+    - user: root
+    - group: radicale
+    - mode: 640
+    - source: salt://radicale/htpasswd.jinja
+    - template: jinja
+    - defaults:
+        htpasswd:
+  {%- for user, hash in salt['pillar.get']('radicale:htpasswd', {}).items() %}
+            {{ user }}: '{{ hash }}'
+  {%- endfor %}
+{% endif %}
