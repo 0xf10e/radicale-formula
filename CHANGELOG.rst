@@ -1,6 +1,15 @@
 radicale formula
 ================
 
+0.0.2a (2014-09-20)
+
+- added a bunch of salt['pillar.get'] to config.jinja
+- manage a htpasswd-file with user:hash pairs from pillar
+- added logging.jinja
+- create storage-directory if storage:type == filesystem
+
+...and for some stupid reason it just won't work...
+
 0.0.1 (2014-09-19)
 
 - Used template-formula_ for the layout
