@@ -1,0 +1,26 @@
+{% set radicale = salt['grains.filter_by']({
+    'default': {
+        'pkg': 'radicale',
+        'service': 'radicale',
+        'config': '/etc/radicale.conf',
+        'htpasswd_filename': '/etc/radicale/users'
+    },
+    'Fedora': {
+        'pkg': 'radicale',
+        'service': 'radicale',
+        'config': '/etc/radicale/config',
+        'htpasswd_filename': '/etc/radicale/users'
+    },
+    'FreeBSD': {
+        'pkg': 'py27-radicale',
+        'service': 'radicale',
+        'config': '/usr/local/etc/radicale/config',
+        'htpasswd_filename': '/usr/local/etc/radicale/users'
+    },
+    'Ubuntu': {
+        'pkg': 'radicale',
+        'service': 'radicale',
+        'config': '/etc/radicale/config',
+        'htpasswd_filename': '/etc/radicale/users'
+    },
+}, merge=salt['pillar.get']('radicale:lookup')) %}
