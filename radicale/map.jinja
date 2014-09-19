@@ -3,24 +3,28 @@
         'pkg': 'radicale',
         'service': 'radicale',
         'config': '/etc/radicale.conf',
+        'daemon': 'False',
         'htpasswd_filename': '/etc/radicale/users'
     },
     'Fedora': {
         'pkg': 'radicale',
         'service': 'radicale',
         'config': '/etc/radicale/config',
+        'daemon': 'True',
         'htpasswd_filename': '/etc/radicale/users'
     },
     'FreeBSD': {
         'pkg': 'py27-radicale',
         'service': 'radicale',
         'config': '/usr/local/etc/radicale/config',
+        'daemon': 'False',
         'htpasswd_filename': '/usr/local/etc/radicale/users'
     },
     'Ubuntu': {
         'pkg': 'radicale',
         'service': 'radicale',
         'config': '/etc/radicale/config',
+        'daemon': 'True',
         'htpasswd_filename': '/etc/radicale/users'
     },
 }, merge=salt['pillar.get']('radicale:lookup')) %}
