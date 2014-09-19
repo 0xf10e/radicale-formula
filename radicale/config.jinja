@@ -1,53 +1,64 @@
 # Config file for Radicale - A simple calendar server
 #
-# Place it into /etc/radicale/config (global)
-# or /usr/local/share/radicale/config (user)
-#
-# The current values are the default ones
-
+# Generated via SaltStack and populated with values from 
+# Salt's Pillar. The sections in this configfile correspond
+# to sub-dictionaries in the Pillar-key 'radicale', i.e.
+# "hosts" in "[server]" is set to pillar[radicale:server:hosts].
+# 
+# For most settings if no pillar-values are present defaults 
+# from FreeBSD's package "py27-radicale-0.8.1" are used.
 
 [server]
 # CalDAV server hostnames separated by a comma
 # IPv4 syntax: address:port
 # IPv6 syntax: [address]:port
 # IPv6 adresses are configured to only allow IPv6 connections
-hosts = {% for host in salt['pillar.get']('radicale:hosts','0.0.0.0:5232') -%}
+### pillar[radicale:server:hosts] has to be a list.
+hosts = {% for host in salt['pillar.get']('radicale:server:hosts',['0.0.0.0:5232']) -%}
 {{ host }} {%- if not loop.last %}, {% endif %}
 {%- endfor %}
 # Daemon flag
-daemon = False
+### The value of this one depends on your init-system 
+### (sysv-init, upstart, systemd,...). If you really 
+### need to override the value chosen for your platform 
+### set pillar[radicale:lookup:server:daemon].
+daemon = {{ radicale.daemon }}
 # File storing the PID in daemon mode
 pid =
 # SSL flag, enable HTTPS protocol
-ssl = False
+ssl = {{ salt['pillar.get']('radicale:server:ssl','False') }}
 # SSL certificate path
-certificate = /usr/local/etc/apache2/ssl/server.crt
+certificate = {{ salt['pillar.get']('radicale:server:certificate','/usr/local/etc/apache2/ssl/server.crt') }}
 # SSL private key
-key = /usr/local/etc/apache2/ssl/server.key
+key = {{ salt['pillar.get']('radicale:server:key','/usr/local/etc/apache2/ssl/server.key') }}
 # Reverse DNS to resolve client address in logs
-dns_lookup = True
+dns_lookup = {{ salt['pillar.get']('radicale:server:dns_lookup','True') }}
 # Root URL of Radicale (starting and ending with a slash)
-base_prefix = /
+base_prefix = {{ salt['pillar.get']('radicale:server:base_prefix','/') }}
 # Message displayed in the client when a password is needed
-realm = Radicale - Password Required lol
+realm = {{ salt['pillar.get']('radicale:server:realm', 'Radicale - Password Required') }}
 
 
 [encoding]
 # Encoding for responding requests
-request = utf-8
+request = {{ salt['pillar.get']('radicale:server:request','utf-8') }}
 # Encoding for storing local collections
-stock = utf-8
+stock = {{ salt['pillar.get']('radicale:server:stock','utf-8') }}
 
 
 [auth]
 # Authentication method
 # Value: None | htpasswd | IMAP | LDAP | PAM | courier | http
-type = None
+type = {{ salt['pillar.get']('radicale:auth:type','htpasswd') }}
 
 # Usernames used for public collections, separated by a comma
-public_users = public
+public_users = {% for user in salt['pillar.get']('radicale:auth:public_users',['public']) %}
+{{ user }}{% if not loop.last %}, {% endif%}
+{%- endfor %}
 # Usernames used for private collections, separated by a comma
-private_users = private
+private_users = {% for user in salt['pillar.get']('radicale:auth:public_users',['private']) %}
+{{ user }}{% if not loop.last %}, {% endif%}
+{%- endfor %}
 
 # Htpasswd filename
 htpasswd_filename = {{ salt['pillar.get']('radicale:auth:htpasswd_filename',radicale.htpasswd_filename) }}
@@ -56,41 +67,41 @@ htpasswd_filename = {{ salt['pillar.get']('radicale:auth:htpasswd_filename',radi
 htpasswd_encryption = {{ salt['pillar.get']('radicale:auth:htpasswd_encryption','sha1') }}
 
 # LDAP server URL, with protocol and port
-ldap_url = ldap://localhost:389/
+ldap_url = {{ salt['pillar.get']('radicale:auth:ldap_url','ldap://localhost:389/') }}
 # LDAP base path
-ldap_base = ou=users,dc=example,dc=com
+ldap_base = {{ salt['pillar.get']('radicale:auth:ldap_base','ou=users,dc=example,dc=com') }}
 # LDAP login attribute
-ldap_attribute = uid
+ldap_attribute = {{ salt['pillar.get']('radicale:auth:ldap_attribute','uid') }}
 # LDAP filter string
 # placed as X in a query of the form (&(...)X)
 # example: (objectCategory=Person)(objectClass=User)(memberOf=cn=calenderusers,ou=users,dc=example,dc=org)
 # leave empty if no additional filter is needed
-ldap_filter =
+ldap_filter = {{ salt['pillar.get']('radicale:auth:ldap_filter','') }}
 # LDAP dn for initial login, used if LDAP server does not allow anonymous searches
 # Leave empty if searches are anonymous
-ldap_binddn =
+ldap_binddn = {{ salt['pillar.get']('radicale:auth:ldap_binddn','') }}
 # LDAP password for initial login, used with ldap_binddn
-ldap_password =
+ldap_password = {{ salt['pillar.get']('radicale:auth:ldap_password','') }}
 # LDAP scope of the search
-ldap_scope = OneLevel
+ldap_scope = {{ salt['pillar.get']('radicale:auth:ldap_scope','OneLevel') }}
 
 # IMAP Configuration
-imap_hostname = localhost
-imap_port = 143
-imap_ssl = False
+imap_hostname = {{ salt['pillar.get']('radicale:auth:imap_hostname','localhost') }}
+imap_port = {{ salt['pillar.get']('radicale:auth:imap_port','143') }}
+imap_ssl = {{ salt['pillar.get']('radicale:auth:imap_ssl','False') }}
 
 # PAM group user should be member of
-pam_group_membership =
+pam_group_membership = {{ salt['pillar.get']('radicale:auth:pam_group_membership','') }}
 
 # Path to the Courier Authdaemon socket
-courier_socket =
+courier_socket = {{ salt['pillar.get']('radicale:auth:courier_socket','') }}
 
 # HTTP authentication request URL endpoint
-http_url =
+http_url = {{ salt['pillar.get']('radicale:auth:http_url','') }}
 # POST parameter to use for username
-http_user_parameter =
+http_user_parameter = {{ salt['pillar.get']('radicale:auth:http_user_parameter','') }}
 # POST parameter to use for password
-http_password_parameter =
+http_password_parameter = {{ salt['pillar.get']('radicale:auth:http_password_parameter','') }}
 
 
 [rights]
