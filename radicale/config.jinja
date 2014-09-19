@@ -52,11 +52,11 @@ stock = {{ salt['pillar.get']('radicale:server:stock','utf-8') }}
 type = {{ salt['pillar.get']('radicale:auth:type','htpasswd') }}
 
 # Usernames used for public collections, separated by a comma
-public_users = {% for user in salt['pillar.get']('radicale:auth:public_users',['public']) %}
+public_users = {% for user in salt['pillar.get']('radicale:auth:public_users',['public']) -%}
 {{ user }}{% if not loop.last %}, {% endif%}
 {%- endfor %}
 # Usernames used for private collections, separated by a comma
-private_users = {% for user in salt['pillar.get']('radicale:auth:public_users',['private']) %}
+private_users = {% for user in salt['pillar.get']('radicale:auth:public_users',['private']) -%}
 {{ user }}{% if not loop.last %}, {% endif%}
 {%- endfor %}
 
@@ -105,21 +105,25 @@ http_password_parameter = {{ salt['pillar.get']('radicale:auth:http_password_par
 
 
 [rights]
+{%- set rights_type = salt['pillar.get']('radicale:rights:type','owner_only') %}
 # Rights management method
 # Value: None | owner_only | owner_write | from_file
-type = None
+type = {{ rights_type }}
 
 # File for rights management from_file
-file = /usr/local/share/radicale/rights
-
+{%- if rights_type == 'from_file' %}
+file = {{ salt['pillar.get']('radicale:rights:file',radicale.rights_file) }}
+{%- else %}
+#file = {{ radicale.rights_file }}
+{%- endif %}
 
 [storage]
 # Storage backend
 # Value: filesystem | database
-type = filesystem
+type = {{ salt['pillar.get']('radicale:storage:type','filesystem') }}
 
 # Folder for storing local collections, created if not present
-filesystem_folder = /usr/local/share/radicale/collections
+filesystem_folder = {{ salt['pillar.get']('radicale:storage:filesystem_folder',radicale.filesystem_folder) }}
 
 # Database URL for SQLAlchemy
 # dialect+driver://user:password@host/dbname[?key=value..]
