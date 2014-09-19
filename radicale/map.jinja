@@ -1,30 +1,46 @@
 {% set radicale = salt['grains.filter_by']({
     'default': {
-        'pkg': 'radicale',
-        'service': 'radicale',
         'config': '/etc/radicale.conf',
         'daemon': 'False',
-        'htpasswd_filename': '/etc/radicale/users'
+        'filesystem_folder': '/var/lib/radicale/collections',
+        'htpasswd_filename': '/etc/radicale/users',
+        'logfile': '/var/log/radicale',
+        'logging': '/etc/radicale/logging',
+        'pkg': 'radicale',
+        'rights_file': '/var/lib/radicale/rights',
+        'service': 'radicale',
     },
     'Fedora': {
-        'pkg': 'radicale',
-        'service': 'radicale',
         'config': '/etc/radicale/config',
         'daemon': 'True',
-        'htpasswd_filename': '/etc/radicale/users'
+        'filesystem_folder': '/var/lib/radicale/collections',
+        'htpasswd_filename': '/etc/radicale/users',
+        'logfile': '/var/log/radicale',
+        'logging': '/etc/radicale/logging',
+        'pkg': 'radicale',
+        'rights_file': '/var/lib/radicale/rights',
+        'service': 'radicale',
     },
     'FreeBSD': {
-        'pkg': 'py27-radicale',
-        'service': 'radicale',
         'config': '/usr/local/etc/radicale/config',
         'daemon': 'False',
-        'htpasswd_filename': '/usr/local/etc/radicale/users'
+        'filesystem_folder': '/usr/local/share/radicale/collections',
+        'htpasswd_filename': '/usr/local/etc/radicale/users',
+        'logfile': '/var/log/radicale',
+        'logging': '/usr/local/etc/radicale/logging',
+        'pkg': 'py27-radicale',
+        'rights_file': '/usr/local/share/radicale/rights',
+        'service': 'radicale',
     },
     'Ubuntu': {
-        'pkg': 'radicale',
-        'service': 'radicale',
         'config': '/etc/radicale/config',
         'daemon': 'True',
-        'htpasswd_filename': '/etc/radicale/users'
+        'filesystem_folder': '/var/lib/radicale/collections',
+        'htpasswd_filename': '/etc/radicale/users',
+        'logfile': '/var/log/radicale',
+        'logging': '/etc/radicale/logging',
+        'pkg': 'radicale',
+        'rights_file': '/var/lib/radicale/rights',
+        'service': 'radicale',
     },
 }, merge=salt['pillar.get']('radicale:lookup')) %}
