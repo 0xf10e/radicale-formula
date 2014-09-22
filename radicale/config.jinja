@@ -37,9 +37,9 @@ pid =
 # SSL flag, enable HTTPS protocol
 ssl = {{ salt['pillar.get']('radicale:server:ssl','False') }}
 # SSL certificate path
-certificate = {{ salt['pillar.get']('radicale:server:certificate','/usr/local/etc/apache2/ssl/server.crt') }}
+certificate = {{ salt['pillar.get']('radicale:server:certificate',radicale.certificate) }}
 # SSL private key
-key = {{ salt['pillar.get']('radicale:server:key','/usr/local/etc/apache2/ssl/server.key') }}
+key = {{ salt['pillar.get']('radicale:server:key',radicale.key) }}
 # Reverse DNS to resolve client address in logs
 dns_lookup = {{ salt['pillar.get']('radicale:server:dns_lookup','True') }}
 # Root URL of Radicale (starting and ending with a slash)
