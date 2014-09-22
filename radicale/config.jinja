@@ -13,10 +13,19 @@
 # IPv4 syntax: address:port
 # IPv6 syntax: [address]:port
 # IPv6 adresses are configured to only allow IPv6 connections
-### pillar[radicale:server:hosts] has to be a list.
+{%- if salt['pillar.get']('radicale:use_grains_for_hosts',
+        salt['grains.get']('virtual_subtype') == 'jail') %}
+### populated with IPs from grains[ipv4]:
+hosts = {% for ipaddr in salt['grains.get']('ipv4') -%}
+{{ '{0}:{1}'.format(ipaddr, salt['pillar.get']('radicale:port','5232')) }}
+    {%- if not loop.last %}, {% endif %}
+  {%- endfor %}
+{%- else %}
+### if present pillar[radicale:server:hosts] has to be a list.
 hosts = {% for host in salt['pillar.get']('radicale:server:hosts',['0.0.0.0:5232']) -%}
 {{ host }} {%- if not loop.last %}, {% endif %}
-{%- endfor %}
+  {%- endfor %}
+{%- endif %}
 # Daemon flag
 ### The value of this one depends on your init-system 
 ### (sysv-init, upstart, systemd,...). If you really 
@@ -137,7 +146,7 @@ database_url =
 # If no config is given, simple information is printed on the standard output
 # For more information about the syntax of the configuration file, see:
 # http://docs.python.org/library/logging.config.html
-config = /usr/local/etc/radicale/logging
+config = {{ radicale.logging }}
 # Set the default logging level to debug
 debug = {{ salt['pillar.get']('radicale:logging:debug',False) }}
 # Store all environment variables (including those set in the shell)
