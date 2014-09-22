@@ -32,12 +32,16 @@ radicale-{{ file }}:
   {%- endfor %}
 {%- endfor %}
 
+{# On Fedora /var/log/radicale/ is created
+    during installation of the pkg. #}
+{% if salt['grains.get']('os') != 'Fedora' %}
 radicale-logfile:
   file.managed:
     - name: {{ radicale.logfile }}
     - user: radicale
     - group: radicale
     - mode: 640
+{% endif %}
 
 {% if salt['pillar.get']('radicale:storage:type','filesystem') == 'filesystem' %}
 radicale-storage:
