@@ -1,3 +1,12 @@
 radicale:
-  lookup:
-    master: radicale-master
+  # Use this one to make radicale listen on the IPs 
+  # from grains[ipv4] (if 'hosts' below isn't set):
+  use_grains_for_hosts: True
+  server:
+    realm: My Calendar Server
+    # This one defaults to '0.0.0.0:5232' which might cause 
+    # problems in a FreeBSD jail which also doesn't have a
+    # loopback interface (see 'use_grains_for_hosts' above):
+    hosts: 127.0.0.1:5232
+  logging:
+    debug: True
