@@ -1,21 +1,10 @@
 {% set radicale = salt['grains.filter_by']({
-    'default': {
-        'config': '/etc/radicale.conf',
-        'daemon': 'False',
-        'filesystem_folder': '/var/lib/radicale/collections',
-        'htpasswd_filename': '/etc/radicale/users',
-        'logfile': '/var/log/radicale',
-        'logging': '/etc/radicale/logging',
-        'pkg': 'radicale',
-        'rights_file': '/var/lib/radicale/rights',
-        'service': 'radicale',
-    },
     'Fedora': {
         'config': '/etc/radicale/config',
         'daemon': 'True',
         'filesystem_folder': '/var/lib/radicale/collections',
         'htpasswd_filename': '/etc/radicale/users',
-        'logfile': '/var/log/radicale',
+        'logfile': '/var/log/radicale/radicale.log',
         'logging': '/etc/radicale/logging',
         'pkg': 'radicale',
         'rights_file': '/var/lib/radicale/rights',
@@ -43,4 +32,4 @@
         'rights_file': '/var/lib/radicale/rights',
         'service': 'radicale',
     },
-}, merge=salt['pillar.get']('radicale:lookup')) %}
+}, merge=salt['pillar.get']('radicale:lookup'), default='Ubuntu') %}
