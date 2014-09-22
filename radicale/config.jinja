@@ -40,10 +40,20 @@ ssl = {{ salt['pillar.get']('radicale:server:ssl','False') }}
 certificate = {{ salt['pillar.get']('radicale:server:certificate',radicale.certificate) }}
 # SSL private key
 key = {{ salt['pillar.get']('radicale:server:key',radicale.key) }}
+{%- if salt['pkg.version'](radicale.pkg).startswith('0.9') %}
+# SSL Protocol used. See python's ssl module for available values
+protocol = {{ salt['pillar.get']('radicale:server:protocol','PROTOCOL_SSLv23') }}
+# Ciphers available. See python's ssl module for available ciphers
+ciphers ={{ ' ' + salt['pillar.get']('radicale:server:ciphers','') }}
+{%- endif %}
 # Reverse DNS to resolve client address in logs
 dns_lookup = {{ salt['pillar.get']('radicale:server:dns_lookup','True') }}
 # Root URL of Radicale (starting and ending with a slash)
 base_prefix = {{ salt['pillar.get']('radicale:server:base_prefix','/') }}
+{%- if salt['pkg.version'](radicale.pkg).startswith('0.9') %}
+# Possibility to allow URLs cleaned by a HTTP server, without the base_prefix
+can_skip_base_prefix = False
+{%- endif %}
 # Message displayed in the client when a password is needed
 realm = {{ salt['pillar.get']('radicale:server:realm', 'Radicale - Password Required') }}
 
@@ -57,8 +67,16 @@ stock = {{ salt['pillar.get']('radicale:server:stock','utf-8') }}
 
 [auth]
 # Authentication method
+{%- if salt['pkg.version'](radicale.pkg).startswith('0.8') %}
 # Value: None | htpasswd | IMAP | LDAP | PAM | courier | http
 type = {{ salt['pillar.get']('radicale:auth:type','htpasswd') }}
+{%- else %}
+# Value: None | htpasswd | IMAP | LDAP | PAM | courier | http | remote_user | custom
+type = {{ salt['pillar.get']('radicale:auth:type','htpasswd') }}
+
+# Custom authentication handler
+custom_handler ={{ ' ' + salt['pillar.get']('radicale:auth:custom_handler','') }}
+{%- endif %}
 
 # Usernames used for public collections, separated by a comma
 public_users = {% for user in salt['pillar.get']('radicale:auth:public_users',['public']) -%}
@@ -112,13 +130,30 @@ http_user_parameter = {{ salt['pillar.get']('radicale:auth:http_user_parameter',
 # POST parameter to use for password
 http_password_parameter = {{ salt['pillar.get']('radicale:auth:http_password_parameter','') }}
 
+{%- if salt['pkg.version'](radicale.pkg).startswith('0.9') %}
+[git]
+# Git default options
+committer = {{ salt['pillar.get']('radicale:git:committer','Radicale <radicale@example.com>') }}
+{% endif %}
 
 [rights]
 {%- set rights_type = salt['pillar.get']('radicale:rights:type','owner_only') %}
+{%- if salt['pkg.version'](radicale.pkg).startswith('0.8') %}
 # Rights management method
 # Value: None | owner_only | owner_write | from_file
 type = {{ rights_type }}
+{%- else %}
+# Rights backend
+# Value: None | authenticated | owner_only | owner_write | from_file | custom
+type = {{ rights_type }}
 
+# Custom rights handler
+  {%- if rights_type == 'custom' %}
+custom_handler = {{ salt['pillar.get']('radicale:rights:custom_handler') }}
+  {%- else %}
+custom_handler =
+  {%- endif %}
+{% endif %}
 # File for rights management from_file
 {%- if rights_type == 'from_file' %}
 file = {{ salt['pillar.get']('radicale:rights:file',radicale.rights_file) }}
@@ -128,8 +163,20 @@ file = {{ salt['pillar.get']('radicale:rights:file',radicale.rights_file) }}
 
 [storage]
 # Storage backend
+{%- if salt['pkg.version'](radicale.pkg).startswith('0.8') %}
 # Value: filesystem | database
 type = {{ salt['pillar.get']('radicale:storage:type','filesystem') }}
+{%- else %}
+# Value: filesystem | multifilesystem | database | custom
+type = {{ salt['pillar.get']('radicale:storage:type','filesystem') }}
+
+# Custom storage handler
+  {%- if rights_type == 'custom' %}
+custom_handler = {{ salt['pillar.get']('radicale:rights:custom_handler') }}
+  {%- else %}
+custom_handler =
+  {%- endif %}
+{% endif %}
 
 # Folder for storing local collections, created if not present
 filesystem_folder = {{ salt['pillar.get']('radicale:storage:filesystem_folder',radicale.filesystem_folder) }}
