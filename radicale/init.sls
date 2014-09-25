@@ -15,6 +15,7 @@ radicale:
     - name: {{ radicale.service }}
     - require:
       - file: {{ radicale.config }}
+      - file: {{ radicale.logging }}
 {# haven't tested Debian, maybe this should be
     os_family == Debian? #}
 {% if salt['grains.get']('os') == 'Ubuntu' %}
