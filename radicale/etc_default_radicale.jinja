@@ -1,7 +1,7 @@
 # Defaults for radicale calendar server (sourced from /etc/init.d/radicale)
 
 # Uncomment to start radicale on system startup
-{%- if salt['pillar.get']('radicale:disabled',False) %}
+{%- if not disabled %}
 ENABLE_RADICALE=yes
 {%- else %}
 #ENABLE_RADICALE=yes
