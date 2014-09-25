@@ -6,7 +6,6 @@
 # Other handlers are available. For more information, see:
 # http://docs.python.org/library/logging.config.html
 
-
 # Loggers, handlers and formatters keys
 
 [loggers]
@@ -42,7 +41,7 @@ formatter = simple
 [handler_file]
 # File handler
 class = FileHandler
-args = ('{{ radicale.logfile }}',)
+args = ('{{ salt['pillar.get']('radicale:lookup:logfile', radicale.logfile) }}',)
 formatter = full
 
 
