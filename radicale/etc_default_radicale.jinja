@@ -1,0 +1,20 @@
+# Defaults for radicale calendar server (sourced from /etc/init.d/radicale)
+
+# Uncomment to start radicale on system startup
+{%- if salt['pillar.get']('radicale:disabled',False) %}
+ENABLE_RADICALE=yes
+{%- else %}
+#ENABLE_RADICALE=yes
+{%- endif %}
+
+# Options for radicale on startup
+# Note that most options can be specified in /etc/radicale/config
+RADICALE_OPTS="--daemon"
+
+# Make initscript verbose, override system default
+# (Note: This is ONLY about the initscript!)
+{%- if verbose_init %}
+VERBOSE=yes
+{%- else %}
+VERBOSE=no
+{%- endif %}

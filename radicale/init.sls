@@ -5,15 +5,35 @@ radicale:
     - installed
     - name: {{ radicale.pkg }}
   service:
+{% if no salt['pillar.get']('radicale:disabled') %}
     - running
-    - name: {{ radicale.service }}
     - enable: True
+{% else %}
+    - dead
+    - enable: False
+{% endif %}
+    - name: {{ radicale.service }}
     - require:
       - file: {{ radicale.config }}
+{# haven't tested Debian, maybe this should be
+    os_family == Debian? #}
+{% if salt['grains.get']('os') == 'Ubuntu' %}
+      - file: /etc/default/radicale
+{%- endif %} 
 {# something's broken on FreeBSD... maybe service.mod_watch? #}
 {%- if not salt['grains.get']('os_family') == 'FreeBSD' %}
     - watch:
       - file: {{ radicale.config }}
+{%- endif %}
+
+{% if salt['grains.get']('os') == 'Ubuntu' -%}
+/etc/default/radicale:
+  file.managed:
+    src: salt://radicale/etc_default_radicale.jinja
+    template: jinja
+    defaults:
+      disabled: {{ salt['pillar.get']('radicale:disabled',False) }}
+      verbose_init: {{ salt['pillar.get']('radicale:verbose_init',True) }}
 {%- endif %}
 
 {% for file in ['config','logging'] %}
