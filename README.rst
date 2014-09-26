@@ -2,7 +2,7 @@
 radicale-formula
 ================
 
-A saltstack formula to install and configure Radicale_, a simple 
+A SaltStack_ formula to install and configure Radicale_, a simple 
 CalDAV/CardDAV-server licensed under GPLv3_.
 
 .. note::
@@ -13,9 +13,8 @@ CalDAV/CardDAV-server licensed under GPLv3_.
 .. note::
     
     This formula is still in beta.
-    As far as I know it works on Ubuntu 14.04.1 with 
-    radicale 0.8-1 and on Fedora 20 with radicale 0.9
 
+.. _SaltStack: http://saltstack.org
 .. _Radicale: http://radicale.org
 .. _GPLv3: https://www.gnu.org/licenses/gpl.html
 
@@ -28,8 +27,8 @@ Available states
 ``radicale``
 ------------
 
-Installs the radicale package, configures and starts the associated 
-radicale service.
+Installs the package for Radicale_, configures and starts the 
+associated ``radicale`` service.
 
 The configuration files are created using templates which are filled
 with data from Pillar_ below the key ``radicale`` 
@@ -43,8 +42,8 @@ Some known pillar-keys are:
     want ``radicale`` enabled as a service and started by default.
 
   - ``radicale:htpasswd``: A dictionary mapping a username to a 
-    password hash. The type of hash `radicale` expects can be set 
-    via ``pillar[radicale:auth:htpasswd_encryption]``. 
+    password hash. The type of hash Radicale expects can be set 
+    via ``pillar[radicale:auth:htpasswd_encryption]`` (see below).
 
     **Empty by default.**
 
@@ -57,8 +56,9 @@ Some known pillar-keys are:
     formula. If you try anything else please report back.*
 
   - ``radicale:auth:htpasswd_filename``: The file where usernames and 
-    passwords for ``auth:type == htpasswd`` are stored. Location the
-    formula defaults to depends on OS and distribution.
+    passwords for ``radicale:auth:type == htpasswd`` are stored. 
+    Location the formula defaults to depends on 
+    ``grains[os_family]`` (`documentation on grains`_).
 
   - ``radicale:auth:htpasswd_encryption``: Algorithm by which the 
     passwords stored in ``pillar[radicale:auth:htpasswd_filename]`` 
@@ -67,8 +67,8 @@ Some known pillar-keys are:
 
     The formula defaults to 'sha1' which is not secure but better 
     than the other choices. For better handling of credentials take 
-    look at the other choices available for 
-    ``pillar[radicale:auth:type]`` under Authentication_ 
+    a look at the other choices available for ``[auth] type`` (set
+    via ``pillar[radicale:auth:type]``) under Authentication_ 
     in the `Radicale User Documentation`_.
 
   - ``radicale:rights:type``: Valid choices are 'None' (**BAD!**), 
@@ -82,6 +82,8 @@ Some known pillar-keys are:
 
 .. _Authentication: 
     http://radicale.org/user_documentation/#idauthentication
+.. _documentation on grains:
+    http://docs.saltstack.com/en/latest/topics/targeting/grains.html
 .. _Rights Management: 
     http://radicale.org/user_documentation/#idrights-management
 .. _Radicale User Documentation: 
