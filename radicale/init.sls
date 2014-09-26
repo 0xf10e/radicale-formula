@@ -16,6 +16,9 @@ radicale:
     - require:
       - file: {{ radicale.config }}
       - file: {{ radicale.logging }}
+{%- if salt['grains.get']('os') != 'Fedora' %}
+      - file: radicale-logfile
+{%- endif %}
 {# haven't tested Debian, maybe this should be
     os_family == Debian? #}
 {% if salt['grains.get']('os') == 'Ubuntu' %}
