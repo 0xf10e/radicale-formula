@@ -12,8 +12,9 @@ CalDAV/CardDAV-server licensed under GPLv3_.
 
 .. note::
     
-    This formula is still in a (mostly broken) beta stage.
-    As far as I know it only works on Ubuntu 14.04.1 with radicale 0.8-1.
+    This formula is still in beta.
+    As far as I know it works on Ubuntu 14.04.1 with 
+    radicale 0.8-1 and on Fedora 20 with radicale 0.9
 
 .. _Radicale: http://radicale.org
 .. _GPLv3: https://www.gnu.org/licenses/gpl.html
@@ -53,7 +54,7 @@ Some known pillar-keys are:
     and 'custom'. See Authentication_ for some details.
 
     *For now (2014-09-25) only 'htpasswd' is known to work with this 
-    formula.*
+    formula. If you try anything else please report back.*
 
   - ``radicale:auth:htpasswd_filename``: The file where usernames and 
     passwords for ``auth:type == htpasswd`` are stored. Location the
